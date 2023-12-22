@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public static class CameraSetter
+public static class StandartStandaloneEasyReader_CameraSetter
 {
     public static void CamTextureSetEnable(WebCamTexture camTextureInput, CameraTextureContoller controllerState)
     {
