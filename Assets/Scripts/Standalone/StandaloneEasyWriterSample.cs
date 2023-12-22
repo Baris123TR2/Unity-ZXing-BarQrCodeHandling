@@ -1,20 +1,17 @@
+using TMPro;
 using UnityEngine;
 using ZXing;
 using ZXing.QrCode;
 
-public class StandaloneEasyWriterSample : MonoBehaviour {
-
-    [SerializeField]
-    private string lastResult;
-    [SerializeField]
-    private Texture2D encoded;
+public class StandaloneEasyWriterSample : MonoBehaviour
+{
+    public Texture2D encoded;
+    [SerializeField] TextMeshProUGUI textMeshProUGUI;
 
     private IBarcodeWriter writer;
     private Color32[] generatedColorData;
 
     private void Start() {
-        lastResult = "http://www.google.com";
-
         encoded = new Texture2D(256, 256);
         generatedColorData = new Color32[256 * 256];
 
@@ -29,7 +26,7 @@ public class StandaloneEasyWriterSample : MonoBehaviour {
 
     private void Update() {
         // encoding from last result
-        generatedColorData = writer.Write(lastResult); // -> performance heavy method
+        generatedColorData = writer.Write(textMeshProUGUI.text); // -> performance heavy method
         encoded.SetPixels32(generatedColorData); // -> performance heavy method
         encoded.Apply();
     }
