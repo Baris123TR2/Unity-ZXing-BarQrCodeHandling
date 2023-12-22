@@ -1,95 +1,86 @@
 using UnityEngine;
 using ZXing;
-
-public class StandaloneEasyReaderSample : MonoBehaviour {
-
-    [SerializeField]
-    private string lastResult;
-    [SerializeField]
-    private bool logAvailableWebcams;
-    [SerializeField]
-    private int selectedWebcamIndex;
-
-    private WebCamTexture camTexture;
-    private Color32[] cameraColorData;
-    private int width, height;
-    private Rect screenRect;
-
-    // create a reader with a custom luminance source
-    private IBarcodeReader barcodeReader = new BarcodeReader {
-        AutoRotate = false,
-        Options = new ZXing.Common.DecodingOptions {
-            TryHarder = false
+public class StandaloneEasyReaderSampleGeneric : MonoBehaviour
+{
+    IBarcodeReader barcodeReader;
+    protected IBarcodeReader BarcodeReader
+    {
+        get
+        {
+            if (barcodeReader == null)
+            {
+                barcodeReader = new BarcodeReader
+                {
+                    AutoRotate = false,
+                    Options = new ZXing.Common.DecodingOptions
+                    {
+                        TryHarder = false
+                    }
+                };
+            }
+            return barcodeReader;
         }
-    };
+    }
 
-    private Result result;
+    protected string lastResult;
+    protected Rect screenRect;
 
-    private void Start() {
-        LogWebcamDevices();
-        SetupWebcamTexture();
-        PlayWebcamTexture();
+    protected WebCamTexture camTexture;
+    protected Color32[] cameraColorData;
+    protected int width, height;
+    protected Result result;
+}
+public class StandaloneEasyReaderSample : StandaloneEasyReaderSampleGeneric
+{
+    [SerializeField] bool logAvailableWebcams;
+    [SerializeField] int selectedWebcamIndex;
+    public string Output => lastResult;
 
-        lastResult = "http://www.google.com";
+    private void Awake() {
+        CameraSetter.LogWebcamDevices(logAvailableWebcams);
+        CameraSetter.SetupWebcamTexture(ref camTexture, selectedWebcamIndex);
+        CameraSetter.PlayWebcamTexture(camTexture, ref width, ref height, ref cameraColorData);
 
-        cameraColorData = new Color32[width * height];
+        lastResult = "Last Result";
         screenRect = new Rect(0, 0, Screen.width, Screen.height);
     }
 
-    private void OnEnable() {
-        PlayWebcamTexture();
+    private void OnEnable()
+    {
+        CameraSetter.CamTextureSetEnable(camTexture, CameraTextureContoller.Start);
     }
 
-    private void OnDisable() {
-        if (camTexture != null) {
-            camTexture.Pause();
-        }
+    private void OnDisable() 
+    {
+        CameraSetter.CamTextureSetEnable(camTexture, CameraTextureContoller.Pause);
     }
 
-    private void Update() {
-        if (camTexture.isPlaying) {
-            // decoding from camera image
-            camTexture.GetPixels32(cameraColorData); // -> performance heavy method 
-            result = barcodeReader.Decode(cameraColorData, width, height); // -> performance heavy method
-            if (result != null) {
-                lastResult = result.Text + " " + result.BarcodeFormat;
-                print(lastResult);
+    private void Update() 
+    {
+        if (camTexture != null)
+        {
+            if (camTexture.isPlaying)
+            {
+                // decoding from camera image
+                camTexture.GetPixels32(cameraColorData); // -> performance heavy method 
+                result = BarcodeReader.Decode(cameraColorData, width, height); // -> performance heavy method
+                if (result != null)
+                {
+                    lastResult = result.Text + " " + result.BarcodeFormat;
+                    print(lastResult);
+                }
             }
         }
     }
 
-    private void OnGUI() {
-        // show camera image on screen
-        GUI.DrawTexture(screenRect, camTexture, ScaleMode.ScaleToFit);
-        // show decoded text on screen
-        GUI.TextField(new Rect(10, 10, 256, 25), lastResult);
+    private void OnGUI() 
+    {
+        GUI.DrawTexture(screenRect, camTexture, ScaleMode.ScaleToFit); // show camera image on screen
+        GUI.TextField(new Rect(10, 10, 256, 25), lastResult); // show decoded text on screen
     }
 
-    private void OnDestroy() {
-        camTexture.Stop();
-    }
-
-    private void LogWebcamDevices() {
-        if (logAvailableWebcams) {
-            WebCamDevice[] devices = WebCamTexture.devices;
-            for (int i = 0; i < devices.Length; i++) {
-                Debug.Log(devices[i].name);
-            }
-        }
-    }
-
-    private void SetupWebcamTexture() {
-        string selectedWebcamDeviceName = WebCamTexture.devices[selectedWebcamIndex].name;
-        camTexture = new WebCamTexture(selectedWebcamDeviceName);
-        camTexture.requestedHeight = Screen.height;
-        camTexture.requestedWidth = Screen.width;
-    }
-
-    private void PlayWebcamTexture() {
-        if (camTexture != null) {
-            camTexture.Play();
-            width = camTexture.width;
-            height = camTexture.height;
-        }
+    private void OnDestroy()
+    {
+        CameraSetter.CamTextureSetEnable(camTexture, CameraTextureContoller.Stop);
     }
 }
