@@ -2,6 +2,7 @@ using UnityEngine;
 using ZXing;
 public class StandaloneEasyReaderSampleGeneric : MonoBehaviour
 {
+    [SerializeField] protected CamDataSO CamDataSO;
     IBarcodeReader barcodeReader;
     protected IBarcodeReader BarcodeReader
     {
@@ -21,66 +22,59 @@ public class StandaloneEasyReaderSampleGeneric : MonoBehaviour
             return barcodeReader;
         }
     }
-
-    protected string lastResult;
-    protected Rect screenRect;
-
-    protected WebCamTexture CamTexture;
-    protected Color32[] cameraColorData;
-    protected int width, height;
-    protected Result Result;
 }
 public class StandaloneEasyReaderSample : StandaloneEasyReaderSampleGeneric
 {
     [SerializeField] bool logAvailableWebcams;
     [SerializeField] int selectedWebcamIndex;
-    public string Output => lastResult;
+    public string Output => CamDataSO.lastResult;
 
     private void Awake() {
         StandartStandaloneEasyReader_CameraSetter.LogWebcamDevices(logAvailableWebcams);
-        StandartStandaloneEasyReader_CameraSetter.SetupWebcamTexture(ref CamTexture, selectedWebcamIndex);
-        StandartStandaloneEasyReader_CameraSetter.PlayWebcamTexture(CamTexture, ref width, ref height, ref cameraColorData);
+        StandartStandaloneEasyReader_CameraSetter.SetupWebcamTexture(ref CamDataSO.CamTexture, selectedWebcamIndex);
+        StandartStandaloneEasyReader_CameraSetter.PlayWebcamTexture(CamDataSO.CamTexture, ref CamDataSO.width, ref CamDataSO.height, ref CamDataSO.cameraColorData);
 
-        lastResult = "Last Result";
-        screenRect = new Rect(0, 0, Screen.width, Screen.height);
+        CamDataSO.lastResult = "Last Result";
+        CamDataSO.screenRect = new Rect(0, 0, Screen.width, Screen.height);
     }
 
     private void OnEnable()
     {
-        StandartStandaloneEasyReader_CameraSetter.CamTextureSetEnable(CamTexture, CameraTextureContoller.Start);
+        StandartStandaloneEasyReader_CameraSetter.CamTextureSetEnable(CamDataSO.CamTexture, CamDataSO.CCOnEnable);
     }
 
     private void OnDisable() 
     {
-        StandartStandaloneEasyReader_CameraSetter.CamTextureSetEnable(CamTexture, CameraTextureContoller.Pause);
+        StandartStandaloneEasyReader_CameraSetter.CamTextureSetEnable(CamDataSO.CamTexture, CamDataSO.CCOnDisable);
     }
 
     private void Update() 
     {
-        if (CamTexture != null)
+        CamDataSO.UpdateCamData();
+        /*if (CamDataSO.CamTexture != null)
         {
-            if (CamTexture.isPlaying)
+            if (CamDataSO.CamTexture.isPlaying)
             {
                 // decoding from camera image
-                CamTexture.GetPixels32(cameraColorData); // -> performance heavy method 
-                Result = BarcodeReader.Decode(cameraColorData, width, height); // -> performance heavy method
-                if (Result != null)
+                CamDataSO.CamTexture.GetPixels32(CamDataSO.cameraColorData); // -> performance heavy method 
+                CamDataSO.Result = BarcodeReader.Decode(CamDataSO.cameraColorData, CamDataSO.width, CamDataSO.height); // -> performance heavy method
+                if (CamDataSO.Result != null)
                 {
-                    lastResult = Result.Text + " " + Result.BarcodeFormat;
-                    print(lastResult);
+                    CamDataSO.lastResult = CamDataSO.Result.Text + " " + CamDataSO.Result.BarcodeFormat;
+                    print(CamDataSO.lastResult);
                 }
             }
-        }
+        }*/
     }
 
     private void OnGUI() 
     {
-        GUI.DrawTexture(screenRect, CamTexture, ScaleMode.ScaleToFit); // show camera image on screen
-        GUI.TextField(new Rect(10, 10, 256, 25), lastResult); // show decoded text on screen
+        GUI.DrawTexture(CamDataSO.screenRect, CamDataSO.CamTexture, ScaleMode.ScaleToFit); // show camera image on screen
+        GUI.TextField(new Rect(10, 10, 256, 25), CamDataSO.lastResult); // show decoded text on screen
     }
 
     private void OnDestroy()
     {
-        StandartStandaloneEasyReader_CameraSetter.CamTextureSetEnable(CamTexture, CameraTextureContoller.Stop);
+        StandartStandaloneEasyReader_CameraSetter.CamTextureSetEnable(CamDataSO.CamTexture, CamDataSO.CCOnDestroy);
     }
 }
