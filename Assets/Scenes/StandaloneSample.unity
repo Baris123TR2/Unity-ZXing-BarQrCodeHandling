@@ -261,6 +261,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c06194fa02190df4e9cf3223b3a8d287, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lastResult: 
+  encoded: {fileID: 0}
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -409,7 +411,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fb787cbe747e7a47bd62b4fca389c83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CameraTextureUpdaterSO: {fileID: 11400000, guid: e45f3fe3561a9644f965e6f7fb8555ea, type: 2}
+  logAvailableWebcams: 1
+  selectedWebcamIndex: 0
 --- !u!4 &1381120315
 Transform:
   m_ObjectHideFlags: 0

@@ -1,6 +1,4 @@
-﻿using TMPro;
-using UnityEngine;
-using ZXing;
+﻿using UnityEngine;
 
 public static class StandartStandaloneEasyReader_CameraSetter
 {
@@ -49,26 +47,14 @@ public static class StandartStandaloneEasyReader_CameraSetter
         camTextureOutput.requestedWidth = Screen.width;
     }
 
-    public static Color32[] PlayWebcamTexture(WebCamTexture webCamTexture)
+    public static void PlayWebcamTexture(WebCamTexture camTextureInput, ref int widthOutput, ref int heightOutput, ref Color32[] colorOutput)
     {
-        if (webCamTexture != null)
+        if (camTextureInput != null)
         {
-            webCamTexture.Play();
-            return new Color32[webCamTexture.width * webCamTexture.height];
-        }
-        else { return null; }
-    }
-    public static string ResultOutput(CameraData camDataInput, IBarcodeReader BarcodeReader)
-    {
-        var result = BarcodeReader.Decode(camDataInput.CamColors, camDataInput.Width, camDataInput.Height); // -> performance heavy method
-
-        if (result != null)
-        {
-            return result.Text + " " + result.BarcodeFormat;
-        }
-        else
-        {
-            return "Result is null";
+            camTextureInput.Play();
+            widthOutput = camTextureInput.width;
+            heightOutput = camTextureInput.height;
+            colorOutput = new Color32[widthOutput * heightOutput];
         }
     }
 
