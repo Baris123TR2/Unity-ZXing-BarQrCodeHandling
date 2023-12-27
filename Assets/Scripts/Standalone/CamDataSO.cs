@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 using ZXing;
 
 [CreateAssetMenu(menuName = "AppKit/Cam Data", fileName = "Cam Data File")]
@@ -53,8 +54,24 @@ public class CamDataSO : ScriptableObject
             }
         }
     }
-    public void Decode()
+    public void Decode(TextMeshProUGUI lastResultOutput)
     {
         Result = BarcodeReader.Decode(cameraColorData, width, height); // -> performance heavy method
+
+        if (Result != null)
+        {
+            if (lastResultOutput != null)
+            {
+                lastResultOutput.text = Result.Text;
+            }
+            else
+            {
+                Debug.Log($"Last result indicator text does not exist");
+            }
+        }
+        else
+        {
+            Debug.Log($"No result captured");
+        }
     }
 }

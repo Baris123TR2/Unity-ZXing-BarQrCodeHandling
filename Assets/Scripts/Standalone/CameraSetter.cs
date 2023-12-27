@@ -1,7 +1,17 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
-public static class StandartStandaloneEasyReader_CameraSetter
+public static class CameraSetter
 {
+
+    public static void StreamWebcamTextureToRawImage(WebCamTexture webCamTextureInput, RawImage ramImageInput)
+    {
+        ramImageInput.texture = webCamTextureInput;
+
+        var camTextureDimensions = new Vector2(webCamTextureInput.width, webCamTextureInput.height);
+
+        ramImageInput.rectTransform.sizeDelta = camTextureDimensions;
+    }
     public static void CamTextureSetEnable(WebCamTexture camTextureInput, CameraTextureContoller controllerState)
     {
         if (camTextureInput == null) return;

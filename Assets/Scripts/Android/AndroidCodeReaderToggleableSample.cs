@@ -36,6 +36,7 @@ public class AndroidCodeReaderToggleableSample : MonoBehaviour {
     }
 
     private void OnCameraFrameReceived(ARCameraFrameEventArgs eventArgs) {
+        
 
         if (!scanningEnabled) {
             return;
