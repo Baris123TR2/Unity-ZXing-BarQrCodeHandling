@@ -1,10 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-
 public static class CameraSetter
 {
-
-    public static void StreamWebcamTextureToRawImage(WebCamTexture webCamTextureInput, RawImage ramImageInput)
+    public static void StreamWebcamTextureToRawImage(ref WebCamTexture webCamTextureInput, RawImage ramImageInput, int selectedCameraIndex)
     {
         ramImageInput.texture = webCamTextureInput;
 
@@ -12,71 +10,79 @@ public static class CameraSetter
 
         ramImageInput.rectTransform.sizeDelta = camTextureDimensions;
     }
-    public static void CamTextureSetEnable(WebCamTexture camTextureInput, CameraTextureContoller controllerState)
+    public static void CamTextureSetEnable(WebCamTexture camTextureInput, CameraTextureContoller controllerState, int selectedCameraIndex)
     {
-        if (camTextureInput == null) return;
-
-        switch (controllerState)
+        if (camTextureInput != null)
         {
-            case CameraTextureContoller.Start:
-                if (!camTextureInput.isPlaying)
-                {
-                    camTextureInput.Play();
-                }
-                break;
-            case CameraTextureContoller.Pause:
-                if (camTextureInput.isPlaying)
-                {
-                    camTextureInput.Pause();
-                }
-                break;
-            case CameraTextureContoller.Stop:
-                camTextureInput.Stop();
-                break;
-            default:
-                break;
+            switch (controllerState)
+            {
+                case CameraTextureContoller.Start:
+                    if (!camTextureInput.isPlaying)
+                    {
+                        camTextureInput.Play();
+                    }
+                    break;
+                case CameraTextureContoller.Pause:
+                    if (camTextureInput.isPlaying)
+                    {
+                        camTextureInput.Pause();
+                    }
+                    break;
+                case CameraTextureContoller.Stop:
+                    camTextureInput.Stop();
+                    break;
+                default:
+                    break;
+            }
+        }
+        else
+        {
+            Debug.Log($"Cam texture is null");
         }
     }
 
     public static void SetupWebcamTexture(ref WebCamTexture camTextureOutput, int selectedWebcamIndexInput)
     {
-        WebCamDevice[] webCamDevices = WebCamTexture.devices;
-        WebCamTexture newCameraTexture;
-        if (selectedWebcamIndexInput > webCamDevices.Length)
+        if (WebCamTexture.devices != null)
         {
-            newCameraTexture = new(webCamDevices[webCamDevices.Length].name);
-            Debug.Log($"Selected webcam index \"{selectedWebcamIndexInput}\" does not exist. Selected the least indexed camera: \"{webCamDevices.Length}\"");
+            if (WebCamTexture.devices.Length > 0)
+            {
+                WebCamDevice[] allCamDevicesAvailable = WebCamTexture.devices;
+
+                Debug.Log($"All cam devices list: {allCamDevicesAvailable}");
+
+                for (int i = 0; i < allCamDevicesAvailable.Length; i++)
+                {
+                    Debug.Log($"Available camera index {i + 1}: {allCamDevicesAvailable[i].name}");
+                }
+
+                WebCamDevice selectedCamera;
+                if (selectedWebcamIndexInput > allCamDevicesAvailable.Length)
+                {
+                    selectedCamera = allCamDevicesAvailable[allCamDevicesAvailable.Length];
+                    Debug.Log($"Selected webcam index \"{selectedWebcamIndexInput}\" does not exist. Selected the least indexed camera: \"{allCamDevicesAvailable.Length}\"");
+                }
+                else
+                {
+                    selectedCamera = allCamDevicesAvailable[selectedWebcamIndexInput];
+                }
+
+                Debug.Log($"Selected camera device is: {selectedCamera.name}");
+
+                WebCamTexture newCameraTexture = new(selectedCamera.name);
+
+                camTextureOutput = newCameraTexture;
+                camTextureOutput.requestedHeight = Screen.height;
+                camTextureOutput.requestedWidth = Screen.width;
+            }
+            else
+            {
+                Debug.Log($"Webcam devices count is: {WebCamTexture.devices.Length}");
+            }
         }
         else
         {
-            newCameraTexture = new(webCamDevices[selectedWebcamIndexInput].name);
-        }
-
-        camTextureOutput = newCameraTexture;
-        camTextureOutput.requestedHeight = Screen.height;
-        camTextureOutput.requestedWidth = Screen.width;
-    }
-
-    public static void PlayWebcamTexture(WebCamTexture camTextureInput, ref int widthOutput, ref int heightOutput, ref Color32[] colorOutput)
-    {
-        if (camTextureInput != null)
-        {
-            camTextureInput.Play();
-            widthOutput = camTextureInput.width;
-            heightOutput = camTextureInput.height;
-            colorOutput = new Color32[widthOutput * heightOutput];
-        }
-    }
-
-    public static void LogWebcamDevices(bool isEnabled)
-    {
-        if (isEnabled)
-        {
-            WebCamDevice[] devices = WebCamTexture.devices;
-            for (int i = 0; i < devices.Length; i++)
-            {
-                Debug.Log(devices[i].name);
-            }
+            Debug.Log("There is not any existing webcam device");
         }
     }
 }

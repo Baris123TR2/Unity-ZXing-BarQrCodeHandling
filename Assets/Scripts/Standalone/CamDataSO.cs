@@ -9,7 +9,7 @@ public class CamDataSO : ScriptableObject
     public CameraTextureContoller CCOnDisable = CameraTextureContoller.Pause;
     public CameraTextureContoller CCOnDestroy = CameraTextureContoller.Stop;
 
-    [HideInInspector] public string lastResult;
+    [HideInInspector] public string ResultOutput;
     [HideInInspector] public Rect screenRect;
 
     [HideInInspector] public WebCamTexture CamTexture;
@@ -48,10 +48,14 @@ public class CamDataSO : ScriptableObject
                 
                 if (Result != null)
                 {
-                    lastResult = Result.Text + " " + Result.BarcodeFormat;
-                    Debug.Log(lastResult);
+                    ResultOutput = $"{Result.Text} {Result.BarcodeFormat}";
+                    Debug.Log(ResultOutput);
                 }
             }
+        }
+        else
+        {
+            Debug.Log($"Cam texture is null");
         }
     }
     public void Decode(TextMeshProUGUI lastResultOutput)
@@ -66,7 +70,7 @@ public class CamDataSO : ScriptableObject
             }
             else
             {
-                Debug.Log($"Last result indicator text does not exist");
+                Debug.Log($"Last result indicator text has not been referenced");
             }
         }
         else

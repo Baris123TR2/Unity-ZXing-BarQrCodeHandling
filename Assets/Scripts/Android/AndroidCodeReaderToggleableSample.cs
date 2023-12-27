@@ -46,7 +46,8 @@ public class AndroidCodeReaderToggleableSample : MonoBehaviour {
             return;
         }
 
-        var conversionParams = new XRCpuImage.ConversionParams {
+        var conversionParams = new XRCpuImage.ConversionParams 
+        {
             // Get the entire image.
             inputRect = new RectInt(0, 0, image.width, image.height),
 

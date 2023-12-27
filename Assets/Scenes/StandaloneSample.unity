@@ -334,7 +334,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -895,9 +895,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CamDataSO: {fileID: 11400000, guid: 40fdd5adae4f6c64aaeefb856c09060a, type: 2}
+  webCamOutputImage: {fileID: 474932050}
   logAvailableWebcams: 1
   selectedWebcamIndex: 0
-  WebCamOutputImage: {fileID: 474932050}
 --- !u!4 &1381120315
 Transform:
   m_ObjectHideFlags: 0
