@@ -4,21 +4,14 @@ using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 using ZXing;
 
-public class AndroidCodeReaderSample : MonoBehaviour {
-
+public class AndroidCodeReaderSample : AndroidCodeReader_BarcodeReader
+{
     [SerializeField]
     private ARCameraManager cameraManager;
     [SerializeField]
     private string lastResult;
 
     private Texture2D cameraImageTexture;
-
-    private IBarcodeReader barcodeReader = new BarcodeReader {
-        AutoRotate = false,
-        Options = new ZXing.Common.DecodingOptions {
-            TryHarder = false
-        }
-    };
 
     private Result result;
 
@@ -80,7 +73,7 @@ public class AndroidCodeReaderSample : MonoBehaviour {
         buffer.Dispose();
 
         // Detect and decode the barcode inside the bitmap
-        result = barcodeReader.Decode(cameraImageTexture.GetPixels32(), cameraImageTexture.width, cameraImageTexture.height);
+        result = BarcodeReader.Decode(cameraImageTexture.GetPixels32(), cameraImageTexture.width, cameraImageTexture.height);
 
         // Do something with the result
         if (result != null) {
